@@ -218,99 +218,114 @@
         }
 
         #developer-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #007bff;
-            color: white;
-            padding: 20px 40px;
-            border-radius: 8px;
-            font-size: 24px;
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: 1000;
-        }
+    /* Yeni Yerleşim: Sağ üst köşe */
+    position: fixed;
+    top: 20px; /* Üstten 20px boşluk */
+    right: 20px; /* Sağdan 20px boşluk */
+    /* Eski translate ve left/top ayarlarını kaldırıyoruz/değiştiriyoruz */
+    left: auto; 
+    transform: none;
 
-        #developer-popup.show {
-            opacity: 1;
-        }
+    background-color: #007bff;
+    color: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    font-size: 24px;
+    opacity: 0;
+    transition: opacity 0.5s, background-color 0.3s; /* Geçişlere background-color'ı da ekledik */
+    z-index: 1000;
+    white-space: nowrap; /* Metnin tek satırda kalmasını sağlar */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Görsel etki ekledik */
+}
 
-        /* Mobile compatibility */
-        @media screen and (max-width: 768px) {
-            .search-container {
-                width: 100%;
-            }
+/* Karanlık mod uyumluluğu */
+body.dark-mode #developer-popup {
+    background-color: #4CAF50; /* Karanlık modda farklı bir renk denenebilir */
+}
 
-            .clear-btn {
-                right: 5px;
-                font-size: 18px;
-            }
+/* Mobile compatibility */
+        @media screen and (max-width: 768px) {
+            .search-container {
+                width: 100%;
+            }
 
-            h1 {
-                font-size: 20px;
-            }
+            .clear-btn {
+                right: 5px;
+                font-size: 18px;
+            }
 
-            .header-buttons {
-                flex-direction: row;
-                justify-content: center;
-                width: 100%;
-                gap: 10px;
-            }
+            h1 {
+                font-size: 20px;
+            }
 
-            .header-buttons button {
-                width: 40px;
-                max-width: 40px;
-                height: 40px;
-                padding: 0;
-            }
+            .header-buttons {
+                flex-direction: row;
+                justify-content: center;
+                width: 100%;
+                gap: 10px;
+            }
 
-            #search-box {
-                width: 100%;
-                padding: 10px;
-                padding-right: 30px; 
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                font-size: 16px;
-                transition: border-color 0.3s;
-            }
+            .header-buttons button {
+                width: 40px;
+                max-width: 40px;
+                height: 40px;
+                padding: 0;
+            }
 
-            #filter-container {
-                flex-direction: column;
-                align-items: center;
-            }
+            #search-box {
+                width: 100%;
+                padding: 10px;
+                padding-right: 30px; 
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+            }
 
-            #filter-container select {
-                width: 100%;
-                max-width: 300px;
-            }
+            #filter-container {
+                flex-direction: column;
+                align-items: center;
+            }
 
-            .catalog-card {
-                flex-direction: row !important;
-                align-items: flex-start;
-                text-align: left;
-                padding: 10px;
-            }
+            #filter-container select {
+                width: 100%;
+                max-width: 300px;
+            }
 
-            .catalog-card img {
-                width: 80px;
-                height: auto;
-                margin-right: 10px !important;
-                margin-bottom: 0 !important;
-                min-width: 80px;
-            }
+            .catalog-card {
+                flex-direction: row !important;
+                align-items: flex-start;
+                text-align: left;
+                padding: 10px;
+            }
 
-            .catalog-card .card-content {
-                flex: 1;
-                min-width: 0;
-            }
+            .catalog-card img {
+                width: 80px;
+                height: auto;
+                margin-right: 10px !important;
+                margin-bottom: 0 !important;
+                min-width: 80px;
+            }
 
-            .mode-toggle {
+            .catalog-card .card-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .mode-toggle {
+                top: 10px;
+                right: 10px;
+            }
+            
+            /* Mobil için developer-popup özel stili */
+            #developer-popup {
                 top: 10px;
                 right: 10px;
+                padding: 10px 20px;
+                font-size: 18px;
             }
-        }
-    </style>
+        }
+    </style>
 </head>
 <body class="light-mode">
 
