@@ -1,649 +1,575 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ISL2-Cabin P/N Katalog Programı</title>
-  <style>
-    /* style.css içeriği */
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 20px;
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.light-mode {
-        background-color: #f9f9f9;
-        color: #333;
-    }
-
-    body.dark-mode {
-        background-color: #222;
-        color: #ddd;
-    }
-
-    h1 {
-        text-align: center;
-        color: #007bff;
-        margin-bottom: 15px;
-        font-size: 24px;
-    }
-
-    #search-box {
-        width: 90%;
-        max-width: 400px;
-        padding: 10px;
-        margin: 0 auto 20px;
-        display: block;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-        transition: border-color 0.3s;
-    }
-
-    #search-box:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-
-    .search-container {
-      position: relative;
-      width: 90%;
-      max-width: 400px;
-      margin: 0 auto 20px;
-    }
-
-    #filter-container {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        justify-content: center;
-    }
-
-    #filter-container select {
-        padding: 8px;
-        font-size: 14px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        width: 200px;
-        transition: border-color 0.3s;
-    }
-
-    #filter-container select:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-
-    #catalog-container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        width: 90%;
-        margin: 0 auto;
-    }
-
-    .catalog-card {
-        display: flex;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-        transition: transform 0.2s, box-shadow 0.2s;
-        animation: fadeIn 0.5s ease-in;
-    }
-
-    body.dark-mode .catalog-card {
-        background: #333;
-    }
-
-    .catalog-card:hover {
-        transform: scale(1.02);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .catalog-card img {
-        width: 100px;
-        height: auto;
-        border-radius: 5px;
-        margin-right: 20px;
-    }
-
-    .catalog-card .card-content {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .catalog-card .card-content div {
-        margin: 5px 0;
-        font-size: 14px;
-    }
-
-    .catalog-card .card-content div strong {
-        color: #007bff;
-    }
-
-    .mode-toggle {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
-
-    #mode-toggle-btn {
-        padding: 8px 16px;
-        font-size: 14px;
-        border: none;
-        border-radius: 5px;
-        background-color: #007bff;
-        color: #fff;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    #mode-toggle-btn:hover {
-        background-color: #0056b3;
-    }
-
-    .clear-btn {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #999;
-      padding: 0 5px;
-      display: none;
-    }
-
-    .clear-btn:hover {
-      color: #333;
-    }
-
-    body.dark-mode .clear-btn:hover {
-      color: #ddd;
-    }
-
-    #loading-spinner {
-        text-align: center;
-        font-size: 16px;
-        color: #007bff;
-        display: none;
-    }
-
-    #loading-spinner.active {
-        display: block;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    .header-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .header-buttons {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-        justify-content: center; /* Butonları merkezle */
-    }
-    
-    .icon-btn {
-        /* İkon butonları için sabit boyut ve hizalama */
-        width: 40px;
-        height: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 18px; /* İkon boyutu */
-        padding: 0; 
-        border: none;
-        border-radius: 50%; /* Yuvarlak buton */
-        background-color: #007bff;
-        color: #fff;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .icon-btn:hover {
-        background-color: #0056b3;
-    }
-
-    #developer-popup {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #007bff;
-        color: white;
-        padding: 20px 40px;
-        border-radius: 8px;
-        font-size: 24px;
-        opacity: 0;
-        transition: opacity 0.5s;
-        z-index: 1000;
-    }
-
-    #developer-popup.show {
-        opacity: 1;
-    }
-
-    /* Mobile compatibility */
-    @media screen and (max-width: 768px) {
-        .search-container {
-            width: 100%;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISL2-Cabin P/N Katalog Programı</title>
+    <style>
+        /* style.css içeriği */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        .clear-btn {
-            right: 5px;
-            font-size: 18px;
+        body.light-mode {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        body.dark-mode {
+            background-color: #222;
+            color: #ddd;
         }
 
         h1 {
-            font-size: 20px;
-        }
-
-        .header-buttons {
-            flex-direction: row; /* Butonları yatay tut */
-            justify-content: center;
-            width: 100%;
-            gap: 10px;
-        }
-
-        .header-buttons button {
-            width: 40px;
-            max-width: 40px;
-            height: 40px;
-            padding: 0;
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 15px;
+            font-size: 24px;
         }
 
         #search-box {
-          width: 100%;
-          padding: 10px;
-          padding-right: 30px; 
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          font-size: 16px;
-          transition: border-color 0.3s;
+            width: 90%;
+            max-width: 400px;
+            padding: 10px;
+            margin: 0 auto 20px;
+            display: block;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        #search-box:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .search-container {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            margin: 0 auto 20px;
         }
 
         #filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        #filter-container select {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+            transition: border-color 0.3s;
+        }
+
+        #filter-container select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        #catalog-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .catalog-card {
+            display: flex;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        body.dark-mode .catalog-card {
+            background: #333;
+        }
+
+        .catalog-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .catalog-card img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+
+        .catalog-card .card-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .catalog-card .card-content div {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .catalog-card .card-content div strong {
+            color: #007bff;
+        }
+
+        .mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        #mode-toggle-btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #mode-toggle-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+            padding: 0 5px;
+            display: none;
+        }
+
+        .clear-btn:hover {
+            color: #333;
+        }
+
+        body.dark-mode .clear-btn:hover {
+            color: #ddd;
+        }
+
+        #loading-spinner {
+            text-align: center;
+            font-size: 16px;
+            color: #007bff;
+            display: none;
+        }
+
+        #loading-spinner.active {
+            display: block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-container {
+            display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        #filter-container select {
-            width: 100%;
-            max-width: 300px;
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            padding: 0; 
+            border: none;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .catalog-card {
-            flex-direction: row !important; 
-            align-items: flex-start;
-            text-align: left;
-            padding: 10px; 
+        .icon-btn:hover {
+            background-color: #0056b3;
         }
 
-        .catalog-card img {
-            width: 80px;
-            height: auto;
-            margin-right: 10px !important; 
-            margin-bottom: 0 !important; 
-            min-width: 80px; 
+        #developer-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #007bff;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 8px;
+            font-size: 24px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1000;
         }
 
-        .catalog-card .card-content {
-            flex: 1; 
-            min-width: 0; 
+        #developer-popup.show {
+            opacity: 1;
         }
 
-        .mode-toggle {
-            top: 10px;
-            right: 10px;
-        }
-    }
+        /* Mobile compatibility */
+        @media screen and (max-width: 768px) {
+            .search-container {
+                width: 100%;
+            }
 
-  </style>
+            .clear-btn {
+                right: 5px;
+                font-size: 18px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .header-buttons {
+                flex-direction: row;
+                justify-content: center;
+                width: 100%;
+                gap: 10px;
+            }
+
+            .header-buttons button {
+                width: 40px;
+                max-width: 40px;
+                height: 40px;
+                padding: 0;
+            }
+
+            #search-box {
+                width: 100%;
+                padding: 10px;
+                padding-right: 30px; 
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+            }
+
+            #filter-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #filter-container select {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .catalog-card {
+                flex-direction: row !important;
+                align-items: flex-start;
+                text-align: left;
+                padding: 10px;
+            }
+
+            .catalog-card img {
+                width: 80px;
+                height: auto;
+                margin-right: 10px !important;
+                margin-bottom: 0 !important;
+                min-width: 80px;
+            }
+
+            .catalog-card .card-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .mode-toggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
 </head>
 <body class="light-mode">
 
-  <div class="header-container">
-    <h1>Cabin P/N Katalog Uygulaması</h1>
-    <div class="header-buttons">
-      <button id="add-data-btn" class="icon-btn" title="Yeni Malzeme Ekle">➕</button>
-      <button id="mode-toggle-btn" class="icon-btn" title="Gece/Gündüz Modu">🌓</button>
-      <button id="developer-btn" class="icon-btn" title="Geliştirici">👨‍💻</button>
-      <button id="sheet-btn" class="icon-btn" title="Veri Sayfası">📊</button>
+    <div class="header-container">
+        <h1>Cabin P/N Katalog Uygulaması</h1>
+        <div class="header-buttons">
+            <button id="add-data-btn" class="icon-btn" title="Yeni Malzeme Ekle">➕</button>
+            <button id="mode-toggle-btn" class="icon-btn" title="Gece/Gündüz Modu">🌓</button>
+            <button id="developer-btn" class="icon-btn" title="Geliştirici">👨‍💻</button>
+            <button id="sheet-btn" class="icon-btn" title="Veri Sayfası">📊</button>
+        </div>
     </div>
-  </div>
     <div class="search-container">
-  <input id="search-box" placeholder="Malzeme, Parça Numarası veya Not ara..." />
-  <button id="clear-search" class="clear-btn">×</button>
-</div>
-  <div id="app-container">
-        <div id="filter-container">
-      <select id="category-filter">
-        <option value="">Tüm Malzemeler</option>
-      </select>
-      <select id="aircraft-filter">
-        <option value="">Tüm Uçak Tipleri</option>
-      </select>
+        <input id="search-box" placeholder="Malzeme, Parça Numarası veya Not ara..." />
+        <button id="clear-search" class="clear-btn">×</button>
     </div>
-    <div id="loading-spinner">Yükleniyor...</div>
-    <div id="catalog-container"></div>
-  </div>
-  <div id="developer-popup">Onur VAR</div>
+    <div id="app-container">
+        <div id="filter-container">
+            <select id="category-filter">
+                <option value="">Tüm Malzemeler</option>
+            </select>
+            <select id="aircraft-filter">
+                <option value="">Tüm Uçak Tipleri</option>
+            </select>
+        </div>
+        <div id="loading-spinner">Yükleniyor...</div>
+        <div id="catalog-container"></div>
+    </div>
+    <div id="developer-popup">Onur VAR</div>
 
-  <script>
-    // app.js içeriği
-    
-    // ⚠️ BURAYI KENDİ BİLGİLERİNİZLE GÜNCELLEYİN
-    const API_KEY = 'AIzaSyDltb5FbPvL9bLgj_GK4_DEDaPK0A7oM_g'; 
-    const SHEET_ID = '16XhSuD_8tEJ0wK_6H5f7csqIfsF6pFneNSphVb_6wsk';
-    const RANGE = 'Form Yanıtları 2'; //'Sayfa 1';
-    // ⚠️ GOOGLE FORM GİRİŞ LİNKİNİZİ BURAYA EKLEYİN
-    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScYxuualKziZhAPT1fUmj5cRRnk0Gn3S1Itu25mSJ7t1pGIaQ/viewform';
-      //'https://docs.google.com/forms/d/e/.../viewform'; 
+    <script>
+        // ⚠️ BURAYI KENDİ BİLGİLERİNİZLE GÜNCELLEYİN
+        const API_KEY = 'AIzaSyDltb5FbPvL9bLgj_GK4_DEDaPK0A7oM_g';
+        const SHEET_ID = '16XhSuD_8tEJ0wK_6H5f7csqIfsF6pFneNSphVb_6wsk';
+        // Form yanıtlarının toplandığı sayfanın adını kontrol edin:
+        const RANGE = 'Form Yanıtları 2'; 
+        const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScYxuualKziZhAPT1fUmj5cRRnk0Gn3S1Itu25mSJ7t1pGIaQ/viewform';
 
 
-    async function fetchSheetData() {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-        document.getElementById('loading-spinner').classList.add('active');
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        async function fetchSheetData() {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+            document.getElementById('loading-spinner').classList.add('active');
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.values;
+            } catch (error) {
+                console.error("Veri çekme hatası:", error);
+                alert("Google Sheets verisi çekilemedi. Lütfen API anahtarınızı (API Key) ve Sheet ID'nizi kontrol edin.");
+                return [];
+            } finally {
+                document.getElementById('loading-spinner').classList.remove('active');
             }
-            const data = await response.json();
-            return data.values;
-        } catch (error) {
-            console.error("Veri çekme hatası:", error);
-            alert("Google Sheets verisi çekilemedi. Lütfen API anahtarınızı (API Key) ve Sheet ID'nizi kontrol edin.");
-            return []; // Hata durumunda boş dizi döndür
-        } finally {
-            document.getElementById('loading-spinner').classList.remove('active');
-        }
-    }
-
-    function populateFilters(data) {
-        if (data.length === 0) return;
-        
-        const categoryFilter = document.getElementById('category-filter');
-        const aircraftFilter = document.getElementById('aircraft-filter');
-        
-        // Önceki seçenekleri temizle (Tüm Malzemeler hariç)
-        while (categoryFilter.children.length > 1) categoryFilter.removeChild(categoryFilter.lastChild);
-        while (aircraftFilter.children.length > 1) aircraftFilter.removeChild(aircraftFilter.lastChild);
-
-
-        const categories = [...new Set(data.slice(1).map(row => row[2]))].filter(Boolean).sort();
-        const aircrafts = [...new Set(data.slice(1).map(row => row[3]))].filter(Boolean).sort();
-
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category;
-            categoryFilter.appendChild(option);
-        });
-
-        aircrafts.forEach(aircraft => {
-            const option = document.createElement('option');
-            option.value = aircraft;
-            option.textContent = aircraft;
-            aircraftFilter.appendChild(option);
-        });
-    }
-
-    function populateCatalog(data) {
-        const container = document.getElementById('catalog-container');
-        container.innerHTML = '';
-        
-        if (data.length === 0) {
-            container.innerHTML = '<p style="text-align: center;">Katalog verisi bulunamadı.</p>';
-            return;
         }
 
-      //resim linki dönüüştür
-      function populateCatalog(data) {
-    const container = document.getElementById('catalog-container');
-    container.innerHTML = '';
-    
-    if (!data || data.length <= 1) {
-        container.innerHTML = '<p style="text-align: center;">Katalog verisi bulunamadı.</p>';
-        return;
-    }
+        function populateFilters(data) {
+            if (data.length === 0) return;
+            
+            const categoryFilter = document.getElementById('category-filter');
+            const aircraftFilter = document.getElementById('aircraft-filter');
+            
+            while (categoryFilter.children.length > 1) categoryFilter.removeChild(categoryFilter.lastChild);
+            while (aircraftFilter.children.length > 1) aircraftFilter.removeChild(aircraftFilter.lastChild);
 
-    data.slice(1).forEach(row => {
-        // Form Yanıtları sayfasında Resim linki 7. sütundadır (Index 6)
-        if (row.length < 7) return;
 
-        const card = document.createElement('div');
-        card.className = 'catalog-card';
+            // 2. sütun Kategori (index 2), 3. sütun Uçak Tipi (index 3)
+            const categories = [...new Set(data.slice(1).map(row => row[2]))].filter(Boolean).sort();
+            const aircrafts = [...new Set(data.slice(1).map(row => row[3]))].filter(Boolean).sort();
 
-        const imgDiv = document.createElement('div');
-        const driveLink = row[6] || ""; 
-        let fileId = "";
-
-        // 🛠️ HER İKİ FORMATI DA DESTEKLEYEN YENİ MANTIK
-        if (driveLink.includes('id=')) {
-            // "open?id=..." formatı için ayıklama
-            fileId = driveLink.split('id=')[1].split('&')[0];
-        } else if (driveLink.includes('/d/')) {
-            // "/file/d/.../view" formatı için ayıklama
-            fileId = driveLink.split('/d/')[1].split('/')[0];
-        }
-
-        // Resim URL'si oluşturma (Thumbnail)
-        const thumbnailUrl = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w400` : '';
-        const originalUrl = fileId ? `https://drive.google.com/file/d/${fileId}/view` : '#';
-
-        const link = document.createElement('a');
-        link.href = originalUrl;
-        link.target = '_blank';
-
-        const img = document.createElement('img');
-        if (fileId) {
-            img.src = thumbnailUrl;
-            // Yükleme hatası (İzin sorunu vb.) durumunda gösterilecek görsel
-            img.onerror = function() {
-                this.src = 'https://via.placeholder.com/100?text=Erişim+Hatası';
-            };
-        } else {
-            img.src = 'https://via.placeholder.com/100?text=Resim+Yok';
-        }
-        
-        img.alt = 'Catalog Image';
-        link.appendChild(img);
-        imgDiv.appendChild(link);
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'card-content';
-
-        // Sütun Eşleşmeleri (B=1, C=2, D=3, E=4, F=5)
-        const fields = [
-            { label: 'Malzeme İsmi', value: row[1] },
-            { label: 'Part Number', value: row[2] },
-            { label: 'Kategori', value: row[3] },
-            { label: 'Uçak Tipi', value: row[4] },
-            { label: 'Not', value: row[5] }
-        ];
-
-        fields.forEach(field => {
-            const div = document.createElement('div');
-            div.innerHTML = `<strong>${field.label}:</strong> ${field.value || '-'}`;
-            contentDiv.appendChild(div);
-        });
-
-        card.appendChild(imgDiv);
-        card.appendChild(contentDiv);
-        container.appendChild(card);
-    });
-}
-
-        data.slice(1).forEach(row => {
-            // Veri satırında yeterli sütun olduğundan emin ol
-            if (row.length < 6) return;
-
-            const card = document.createElement('div');
-            card.className = 'catalog-card';
-
-            const imgDiv = document.createElement('div');
-            // Resim linki 6. sütunda (F)
-            const driveLink = row[6];
-            let fileId = null;
-
-            // Google Drive URL'sinden File ID'yi çıkarma
-            const match = driveLink.match(/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (match && match[1]) {
-                fileId = match[1];
-            }
-
-            const thumbnailUrl = fileId ? `https://drive.google.com/thumbnail?id=${fileId}` : '';
-            const originalUrl = fileId ? `https://drive.google.com/file/d/${fileId}/view` : '#';
-
-            const link = document.createElement('a');
-            link.href = originalUrl;
-            link.target = '_blank';
-
-            const img = document.createElement('img');
-            img.src = thumbnailUrl || 'placeholder.png'; // Resim yoksa bir placeholder kullanabilirsiniz
-            img.alt = 'Catalog Image';
-            link.appendChild(img);
-            imgDiv.appendChild(link);
-
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'card-content';
-
-            // Not alanı 5. sütun (E)
-            const fields = [
-                { label: 'Malzeme İsmi', value: row[1] },
-                { label: 'Part Number', value: row[2] },
-                { label: 'Kategori', value: row[3] },
-                { label: 'Uçak Tipi', value: row[4] },
-                { label: 'Not', value: row[5] }
-            ];
-
-            fields.forEach(field => {
-                const div = document.createElement('div');
-                div.innerHTML = `<strong>${field.label}:</strong> ${field.value || '-'}`;
-                contentDiv.appendChild(div);
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
             });
 
-            card.appendChild(imgDiv);
-            card.appendChild(contentDiv);
-            container.appendChild(card);
-        });
-    }
-
-    function filterCatalog() {
-        const searchQuery = document.getElementById('search-box').value.toLowerCase().trim();
-        const categoryFilter = document.getElementById('category-filter').value;
-        const aircraftFilter = document.getElementById('aircraft-filter').value;
-        const cards = document.querySelectorAll('.catalog-card');
-        const clearSearchBtn = document.getElementById('clear-search');
-        
-        // Arama kutusunda yazı varsa temizleme butonunu göster
-        clearSearchBtn.style.display = searchQuery ? 'block' : 'none';
-
-        cards.forEach(card => {
-            const content = card.querySelector('.card-content');
-            // innerHTML'den sadece metin içeriğini al
-            const malzeme = content.children[0].textContent.replace('Malzeme İsmi:', '').trim().toLowerCase();
-            const partNo = content.children[1].textContent.replace('Part Number:', '').trim().toLowerCase();
-            const kategori = content.children[2].textContent.replace('Kategori:', '').trim();
-            const ucakTipi = content.children[3].textContent.replace('Uçak Tipi:', '').trim();
-            const not = content.children[4].textContent.replace('Not:', '').trim().toLowerCase(); 
-
-            const searchMatch = !searchQuery || 
-                malzeme.includes(searchQuery) || 
-                partNo.includes(searchQuery) ||
-                not.includes(searchQuery);
-
-            const categoryMatch = !categoryFilter || kategori === categoryFilter;
-            const aircraftMatch = !aircraftFilter || ucakTipi === aircraftFilter;
-
-            card.style.display = searchMatch && categoryMatch && aircraftMatch ? 'flex' : 'none';
-        });
-    }
-
-    function toggleMode() {
-        const body = document.body;
-        const btn = document.getElementById('mode-toggle-btn');
-        if (body.classList.contains('light-mode')) {
-            body.classList.remove('light-mode');
-            body.classList.add('dark-mode');
-            btn.textContent = '☀️'; // Gündüz modu ikonu
-            btn.title = 'Gündüz Modu';
-        } else {
-            body.classList.remove('dark-mode');
-            body.classList.add('light-mode');
-            btn.textContent = '🌓'; // Gece modu ikonu
-            btn.title = 'Gece/Gündüz Modu';
+            aircrafts.forEach(aircraft => {
+                const option = document.createElement('option');
+                option.value = aircraft;
+                option.textContent = aircraft;
+                aircraftFilter.appendChild(option);
+            });
         }
-    }
 
-    function showDeveloperPopup() {
-        const popup = document.getElementById('developer-popup');
-        popup.classList.add('show');
-        setTimeout(() => {
-            popup.classList.remove('show');
-        }, 2000);
-    }
+        function populateCatalog(data) {
+            const container = document.getElementById('catalog-container');
+            container.innerHTML = '';
+            
+            if (!data || data.length <= 1) {
+                container.innerHTML = '<p style="text-align: center;">Katalog verisi bulunamadı.</p>';
+                return;
+            }
 
-    function openSheet() {
-        window.open(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit?usp=sharing`, '_blank');
-    }
-    
-    function openDataForm() {
-        // Form linkini açar
-        window.open(GOOGLE_FORM_URL, '_blank');
-    }
+            data.slice(1).forEach(row => {
+                // Resim linki 7. sütundadır (Index 6)
+                if (row.length < 7) return;
 
-    function init() {
-        const searchBox = document.getElementById('search-box');
-        const categoryFilter = document.getElementById('category-filter');
-        const aircraftFilter = document.getElementById('aircraft-filter');
-        const modeToggleBtn = document.getElementById('mode-toggle-btn');
-        const developerBtn = document.getElementById('developer-btn');
-        const sheetBtn = document.getElementById('sheet-btn');
-        const clearSearchBtn = document.getElementById('clear-search');
-        const addDataBtn = document.getElementById('add-data-btn');
+                const card = document.createElement('div');
+                card.className = 'catalog-card';
 
-        // Event Dinleyicileri
-        searchBox.addEventListener('input', filterCatalog);
-        categoryFilter.addEventListener('change', filterCatalog);
-        aircraftFilter.addEventListener('change', filterCatalog);
-        modeToggleBtn.addEventListener('click', toggleMode);
-        developerBtn.addEventListener('click', showDeveloperPopup);
-        sheetBtn.addEventListener('click', openSheet);
-        addDataBtn.addEventListener('click', openDataForm);
+                const imgDiv = document.createElement('div');
+                const driveLink = row[6] || ""; 
+                let fileId = "";
+
+                // 🛠️ HER İKİ FORMATI DA DESTEKLEYEN YENİ ID AYIKLAMA MANTIĞI
+                if (driveLink.includes('id=')) {
+                    // "open?id=..." formatı için ayıklama
+                    fileId = driveLink.split('id=')[1].split('&')[0];
+                } else if (driveLink.includes('/d/')) {
+                    // "/file/d/.../view" formatı için ayıklama
+                    fileId = driveLink.split('/d/')[1].split('/')[0];
+                }
+                
+                // Resim URL'si oluşturma (Thumbnail)
+                const thumbnailUrl = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w400` : '';
+                const originalUrl = fileId ? `https://drive.google.com/file/d/${fileId}/view` : '#';
+
+                const link = document.createElement('a');
+                link.href = originalUrl;
+                link.target = '_blank';
+
+                const img = document.createElement('img');
+                if (fileId) {
+                    img.src = thumbnailUrl;
+                    // Yükleme hatası (İzin sorunu vb.) durumunda gösterilecek görsel
+                    img.onerror = function() {
+                        this.src = 'https://via.placeholder.com/100?text=Erişim+Hatası';
+                    };
+                } else {
+                    img.src = 'https://via.placeholder.com/100?text=Resim+Yok';
+                }
+                
+                img.alt = 'Catalog Image';
+                link.appendChild(img);
+                imgDiv.appendChild(link);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'card-content';
+
+                // Sütun Eşleşmeleri: B=1, C=2, D=3, E=4, F=5
+                const fields = [
+                    { label: 'Malzeme İsmi', value: row[1] },
+                    { label: 'Part Number', value: row[2] },
+                    { label: 'Kategori', value: row[3] },
+                    { label: 'Uçak Tipi', value: row[4] },
+                    { label: 'Not', value: row[5] }
+                ];
+
+                fields.forEach(field => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `<strong>${field.label}:</strong> ${field.value || '-'}`;
+                    contentDiv.appendChild(div);
+                });
+
+                card.appendChild(imgDiv);
+                card.appendChild(contentDiv);
+                container.appendChild(card);
+            });
+        }
+
+        function filterCatalog() {
+            const searchQuery = document.getElementById('search-box').value.toLowerCase().trim();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const aircraftFilter = document.getElementById('aircraft-filter').value;
+            const cards = document.querySelectorAll('.catalog-card');
+            const clearSearchBtn = document.getElementById('clear-search');
+            
+            clearSearchBtn.style.display = searchQuery ? 'block' : 'none';
+
+            cards.forEach(card => {
+                const content = card.querySelector('.card-content');
+                // innerHTML'den sadece metin içeriğini al ve temizle
+                const malzeme = content.children[0].textContent.replace('Malzeme İsmi:', '').trim().toLowerCase();
+                const partNo = content.children[1].textContent.replace('Part Number:', '').trim().toLowerCase();
+                const kategori = content.children[2].textContent.replace('Kategori:', '').trim();
+                const ucakTipi = content.children[3].textContent.replace('Uçak Tipi:', '').trim();
+                const not = content.children[4].textContent.replace('Not:', '').trim().toLowerCase(); 
+
+                const searchMatch = !searchQuery || 
+                    malzeme.includes(searchQuery) || 
+                    partNo.includes(searchQuery) ||
+                    not.includes(searchQuery);
+
+                const categoryMatch = !categoryFilter || kategori === categoryFilter;
+                const aircraftMatch = !aircraftFilter || ucakTipi === aircraftFilter;
+
+                card.style.display = searchMatch && categoryMatch && aircraftMatch ? 'flex' : 'none';
+            });
+        }
+
+        function toggleMode() {
+            const body = document.body;
+            const btn = document.getElementById('mode-toggle-btn');
+            if (body.classList.contains('light-mode')) {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                btn.textContent = '☀️';
+                btn.title = 'Gündüz Modu';
+            } else {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                btn.textContent = '🌓';
+                btn.title = 'Gece/Gündüz Modu';
+            }
+        }
+
+        function showDeveloperPopup() {
+            const popup = document.getElementById('developer-popup');
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 2000);
+        }
+
+        function openSheet() {
+            window.open(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit?usp=sharing`, '_blank');
+        }
         
-        clearSearchBtn.addEventListener('click', function() {
-            searchBox.value = ''; 
-            clearSearchBtn.style.display = 'none'; 
-            filterCatalog(); 
-        });
+        function openDataForm() {
+            window.open(GOOGLE_FORM_URL, '_blank');
+        }
+
+        function init() {
+            const searchBox = document.getElementById('search-box');
+            const categoryFilter = document.getElementById('category-filter');
+            const aircraftFilter = document.getElementById('aircraft-filter');
+            const modeToggleBtn = document.getElementById('mode-toggle-btn');
+            const developerBtn = document.getElementById('developer-btn');
+            const sheetBtn = document.getElementById('sheet-btn');
+            const clearSearchBtn = document.getElementById('clear-search');
+            const addDataBtn = document.getElementById('add-data-btn');
+
+            // Event Dinleyicileri
+            searchBox.addEventListener('input', filterCatalog);
+            categoryFilter.addEventListener('change', filterCatalog);
+            aircraftFilter.addEventListener('change', filterCatalog);
+            modeToggleBtn.addEventListener('click', toggleMode);
+            developerBtn.addEventListener('click', showDeveloperPopup);
+            sheetBtn.addEventListener('click', openSheet);
+            addDataBtn.addEventListener('click', openDataForm);
+            
+            clearSearchBtn.addEventListener('click', function() {
+                searchBox.value = ''; 
+                filterCatalog();
+            });
 
 
-        // İlk Yükleme
-        fetchSheetData().then(data => {
-            populateFilters(data);
-            populateCatalog(data);
-        });
-    }
+            // İlk Yükleme
+            fetchSheetData().then(data => {
+                populateFilters(data);
+                populateCatalog(data);
+            });
+        }
 
-    init();
-
-  </script>
+        init();
+    </script>
 </body>
 </html>
