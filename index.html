@@ -380,9 +380,9 @@
             while (aircraftFilter.children.length > 1) aircraftFilter.removeChild(aircraftFilter.lastChild);
 
 
-            // 2. sütun Kategori (index 2), 3. sütun Uçak Tipi (index 3)
-            const categories = [...new Set(data.slice(1).map(row => row[2]))].filter(Boolean).sort();
-            const aircrafts = [...new Set(data.slice(1).map(row => row[3]))].filter(Boolean).sort();
+            // 4. sütun Kategori (index 3), 5. sütun Uçak Tipi (index 4)
+            const categories = [...new Set(data.slice(1).map(row => row[3]))].filter(Boolean).sort();
+            const aircrafts = [...new Set(data.slice(1).map(row => row[4]))].filter(Boolean).sort();
 
             categories.forEach(category => {
                 const option = document.createElement('option');
